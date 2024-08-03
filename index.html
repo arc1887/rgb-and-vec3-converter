@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .result {
+            font-size: 1.2em;
+            color: #333;
+            text-align: center;
+        }
+        .result span {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Color Converter</h1>
+        <div class="input-group">
+            <label for="hexInput">Hex Color:</label>
+            <input type="text" id="hexInput" placeholder="#ff5733">
+        </div>
+        <div class="input-group">
+            <label for="vec3Input">Vec3 Color:</label>
+            <input type="text" id="vec3Input" placeholder="1.0, 0.5, 0.2">
+        </div>
+        <div class="result">
+            <span id="hexResult">Hex: </span>
+            <span id="vec3Result">Vec3: </span>
+        </div>
+    </div>
+    <script>
+        function hexToVec3(hex) {
+            hex = hex.replace('#', '');
+            return [
+                parseInt(hex.substring(0, 2), 16) / 255,
+                parseInt(hex.substring(2, 4), 16) / 255,
+                parseInt(hex.substring(4, 6), 16) / 255
+            ];
+        }
+
+        function vec3ToHex(vec3) {
+            return '#' + vec3.map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+        }
+
+        function updateResults() {
+            const hexInput = document.getElementById('hexInput').value;
+            const vec3Input = document.getElementById('vec3Input').value;
+
+            let hexResult = '';
+            let vec3Result = '';
+
+            if (/^#[0-9A-Fa-f]{6}$/.test(hexInput)) {
+                const vec3 = hexToVec3(hexInput);
+                vec3Result = `Vec3: ${vec3.map(v => v.toFixed(2)).join(', ')}`;
+            }
+
+            if (/^\d+(\.\d+)?,\s*\d+(\.\d+)?,\s*\d+(\.\d+)?$/.test(vec3Input)) {
+                const vec3 = vec3Input.split(',').map(v => parseFloat(v.trim()));
+                hexResult = `Hex: ${vec3ToHex(vec3)}`;
+            }
+
+            document.getElementById('hexResult').innerText = hexResult || 'Hex: ';
+            document.getElementById('vec3Result').innerText = vec3Result || 'Vec3: ';
+        }
+
+        document.getElementById('hexInput').addEventListener('input', updateResults);
+        document.getElementById('vec3Input').addEventListener('input', updateResults);
+    </script>
+</body>
+</html>
